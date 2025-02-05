@@ -1,7 +1,11 @@
 package com.example.gotoit.Presentation.EventsScreen
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,10 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.gotoit.API.EventsModel
 import com.example.gotoit.API.EventsModelItem
 import com.example.gotoit.API.NetworkResponse
@@ -94,10 +101,7 @@ fun EventsPage(viewModel: EventsViewModel, navController: NavController){
             }
         }
 
-        Column(
-            modifier = Modifier
-                .weight(8f)
-        ) {
+        Column(modifier = Modifier.weight(8f)) {
             when (val result = eventsResult.value) {
                 is NetworkResponse.Error -> TODO()
                 NetworkResponse.Loading ->
@@ -140,38 +144,62 @@ fun EventList(data: EventsModel){
 }
 
 @Composable
-fun EventsItem(item: EventsModelItem){
-    Column(
+fun EventsItem(item: EventsModelItem) {
+    val context = LocalContext.current
+    val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(item.link)) }
+
+    Box(
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
-            .height(270.dp)
+            .height(229.dp)
             .clip(shape = RoundedCornerShape(10.dp))
-            .background(color = colorResource(R.color.tags_green)),
+            .clickable {
+                context.startActivity(intent)
+            }
+    ) {
+        // Изображение
+        AsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            model = item.imageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Fit
+        )
 
-        verticalArrangement = Arrangement.SpaceBetween
-    ){
-        Column() {
-            SemiBold13(modifier = Modifier.padding(10.dp), text = { item.eventDatetime })
+        // Затемнение
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.75f)) // Сплошное затемнение
+        )
 
-            Bold24(modifier = Modifier.padding(10.dp), text = { item.eventName })
+        // Текстовые компоненты
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column() {
+                SemiBold13(text = {item.eventDatetime})
+                Bold24(modifier = Modifier.padding(top = 10.dp), text = {item.eventName})
+            }
+            EventsTags(eventsTags = item)
         }
-
-        EventsTags(eventsTags = item)
     }
 }
 
 @Composable
-fun EventsTags(eventsTags: EventsModelItem){
+fun EventsTags(eventsTags: EventsModelItem) {
     LazyRow {
         items(eventsTags.eventsTags) { tag ->
-            Row (
+            Row(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .padding(0.dp, 0.dp, 10.dp, 10.dp)
                     .clip(shape = RoundedCornerShape(10.dp))
-                    .background(color = colorResource(R.color.tag_tags_green))
-            ){
-                SemiBold13(modifier = Modifier.padding(5.dp), text = { tag })
+                    .background(color = colorResource(R.color.tags_green))
+            ) {
+                SemiBold13(modifier = Modifier.padding(5.dp), text = {tag})
             }
         }
     }
@@ -192,6 +220,7 @@ fun EventsItemPreview(){
         "Test DateTime",
         "Test Name",
         listOf("Test Tag", "Test Tag"),
+        "",
         "")
     )
 }
