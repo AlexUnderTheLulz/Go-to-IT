@@ -1,4 +1,4 @@
-package com.example.gotoit.ui.theme
+package com.example.gotoit.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

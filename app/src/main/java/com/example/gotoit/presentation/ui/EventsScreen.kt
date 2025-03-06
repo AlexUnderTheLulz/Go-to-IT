@@ -1,4 +1,4 @@
-package com.example.gotoit.Presentation.EventsScreen
+package com.example.gotoit.presentation.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -23,11 +23,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,25 +34,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.gotoit.API.EventsModel
-import com.example.gotoit.API.EventsModelItem
-import com.example.gotoit.API.NetworkResponse
+import com.example.gotoit.data.model.EventsModel
+import com.example.gotoit.data.model.EventsModelItem
+import com.example.gotoit.data.api.NetworkResponse
 import com.example.gotoit.R
-import com.example.gotoit.theme.typography.Bold15
-import com.example.gotoit.theme.typography.Bold24
-import com.example.gotoit.theme.typography.SemiBold13
+import com.example.gotoit.presentation.theme.typography.Bold24
+import com.example.gotoit.presentation.theme.typography.SemiBold13
+import com.example.gotoit.presentation.viewmodel.EventsViewModel
 
 
 @Composable
-fun EventsPage(viewModel: EventsViewModel, navController: NavController){
+fun EventsPage(viewModel: EventsViewModel, navController: NavHostController){
 
-    var events by remember {
-        mutableStateOf("")
-    }
-
-    val eventsResult = viewModel.evetsResult.observeAsState()
+    val eventsResult = viewModel.eventsResult.observeAsState()
 
     Column(
         modifier = Modifier
@@ -126,8 +119,9 @@ fun EventsPage(viewModel: EventsViewModel, navController: NavController){
                         Arrangement.Center,
                         Alignment.CenterHorizontally
                     ){
-                        Bold15(text = { "Нажмите обновить, чтобы получить" })
-                        Bold15(text = { "список актуальных мероприятий" })
+                        CircularProgressIndicator(
+                            color = Color.White
+                        )
                     }
             }
         }
@@ -158,7 +152,6 @@ fun EventsItem(item: EventsModelItem) {
                 context.startActivity(intent)
             }
     ) {
-        // Изображение
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
             model = item.imageUrl,
@@ -166,14 +159,12 @@ fun EventsItem(item: EventsModelItem) {
             contentScale = ContentScale.Fit
         )
 
-        // Затемнение
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.75f)) // Сплошное затемнение
+                .background(Color.Black.copy(alpha = 0.75f))
         )
 
-        // Текстовые компоненты
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -205,18 +196,12 @@ fun EventsTags(eventsTags: EventsModelItem) {
     }
 }
 
-/*
-@Preview(showBackground = true)
-@Composable
-fun EventsPagePreview(){
-    EventsPage(EventsViewModel())
-}
- */
 
 @Preview
 @Composable
 fun EventsItemPreview(){
-    EventsItem(EventsModelItem(
+    EventsItem(
+        EventsModelItem(
         "Test DateTime",
         "Test Name",
         listOf("Test Tag", "Test Tag"),

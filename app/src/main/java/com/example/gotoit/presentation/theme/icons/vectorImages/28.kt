@@ -1,4 +1,4 @@
-package com.example.gotoit.theme.icons.vectorImages
+package com.example.gotoit.presentation.theme.icons.vectorImages
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor

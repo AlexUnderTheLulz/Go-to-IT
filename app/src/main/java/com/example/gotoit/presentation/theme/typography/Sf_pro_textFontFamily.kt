@@ -1,4 +1,4 @@
-package com.example.gotoit.theme.typography
+package com.example.gotoit.presentation.theme.typography
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily

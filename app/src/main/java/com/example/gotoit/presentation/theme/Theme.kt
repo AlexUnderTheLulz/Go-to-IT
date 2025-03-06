@@ -1,4 +1,4 @@
-package com.example.gotoit.ui.theme
+package com.example.gotoit.presentation.theme
 
 import android.app.Activity
 import android.os.Build

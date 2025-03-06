@@ -1,4 +1,4 @@
-package com.example.gotoit.Presentation
+package com.example.gotoit.presentation.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,11 +23,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.gotoit.Presentation.EventsScreen.EventsViewModel
+import com.example.gotoit.presentation.viewmodel.EventsViewModel
 import com.example.gotoit.R
-import com.example.gotoit.theme.typography.Bold15
-import com.example.gotoit.theme.typography.Bold24
-import com.example.gotoit.theme.icons.vectorImages.Student
+import com.example.gotoit.presentation.theme.typography.Bold15
+import com.example.gotoit.presentation.theme.typography.Bold24
+import com.example.gotoit.presentation.theme.icons.vectorImages.Student
 
 
 @Composable

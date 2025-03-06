@@ -1,6 +1,4 @@
-package com.example.gotoit.API
-
-class EventsModel : ArrayList<EventsModelItem>()
+package com.example.gotoit.data.model
 
 data class EventsModelItem(
     val eventDatetime: String,

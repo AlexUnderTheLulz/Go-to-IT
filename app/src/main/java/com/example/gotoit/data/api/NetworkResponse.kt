@@ -1,4 +1,4 @@
-package com.example.gotoit.API
+package com.example.gotoit.data.api
 
 sealed class NetworkResponse<out T> {
     data class Success<out T>(val data: T) : NetworkResponse<T>()

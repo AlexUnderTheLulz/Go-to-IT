@@ -1,16 +1,15 @@
-package com.example.gotoit.API
+package com.example.gotoit.data.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
 
-    private val baseUrl = "https://functions.yandexcloud.net";
+    private const val BASE_URL  = "https://functions.yandexcloud.net";
 
     private fun getInstance(): Retrofit {
-
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
