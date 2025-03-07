@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
-import com.example.gotoit.presentation.bottomnavigation.AppNavigation
+import com.example.gotoit.presentation.appnavigation.AppNavigation
 import com.example.gotoit.presentation.viewmodel.EventsViewModel
 
 

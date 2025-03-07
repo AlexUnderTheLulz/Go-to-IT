@@ -1,11 +1,10 @@
-package com.example.gotoit.presentation.bottomnavigation
+package com.example.gotoit.presentation.appnavigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +28,7 @@ fun NavigationGraph(
         composable(route = "homeScreen") {
             MainScreen(navController)
         }
+
         composable(route = "EventsScreen") {
             EventsPage(eventsViewModel, navController)
         }
@@ -37,13 +37,17 @@ fun NavigationGraph(
 
 
 @Composable
-fun AppNavigation(eventsViewModel: EventsViewModel){
+fun AppNavigation(eventsViewModel: EventsViewModel) {
     val navController = rememberNavController()
 
     Scaffold(
         bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
-        NavigationGraph(navController = navController, eventsViewModel = eventsViewModel, innerPadding = innerPadding)
+        NavigationGraph(
+            navController = navController,
+            eventsViewModel = eventsViewModel,
+            innerPadding = innerPadding
+        )
     }
 }
 

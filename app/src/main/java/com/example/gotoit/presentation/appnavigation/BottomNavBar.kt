@@ -1,4 +1,4 @@
-package com.example.gotoit.presentation.bottomnavigation
+package com.example.gotoit.presentation.appnavigation
 
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable

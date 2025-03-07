@@ -1,4 +1,4 @@
-package com.example.gotoit.presentation.bottomnavigation
+package com.example.gotoit.presentation.appnavigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle

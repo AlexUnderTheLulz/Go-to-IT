@@ -5,5 +5,6 @@ data class EventsModelItem(
     val eventName: String,
     val eventsTags: List<String>,
     val link: String,
-    val imageUrl: String
+    val imageUrl: String,
+    val isLiked: Boolean = false
 )

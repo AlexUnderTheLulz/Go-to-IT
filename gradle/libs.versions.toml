@@ -1,5 +1,7 @@
 [versions]
-agp = "8.7.3"
+accompanistSwiperefresh = "0.37.2"
+accompanistSwiperefreshVersion = "0.36.0"
+agp = "8.8.2"
 coilCompose = "2.1.0"
 converterGson = "2.9.0"
 converterMoshi = "2.5.0"
@@ -20,12 +22,16 @@ okhttp = "4.12.0"
 retrofit = "2.11.0"
 supportAnnotations = "28.0.0"
 runtimeLivedata = "1.7.7"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
+accompanist-swiperefresh-v0360 = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefreshVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }

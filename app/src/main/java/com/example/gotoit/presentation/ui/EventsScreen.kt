@@ -23,8 +23,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,10 +46,15 @@ import com.example.gotoit.R
 import com.example.gotoit.presentation.theme.typography.Bold24
 import com.example.gotoit.presentation.theme.typography.SemiBold13
 import com.example.gotoit.presentation.viewmodel.EventsViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun EventsPage(viewModel: EventsViewModel, navController: NavHostController){
+fun EventsPage(viewModel: EventsViewModel, navController: NavHostController) {
 
     val eventsResult = viewModel.eventsResult.observeAsState()
 
@@ -55,70 +63,49 @@ fun EventsPage(viewModel: EventsViewModel, navController: NavHostController){
             .fillMaxSize()
             .background(color = colorResource(R.color.background_black)),
         verticalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .weight(0.5f)
-        ){}
+        ) {}
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(10.dp),
+                .padding(15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
-        ){
-            IconButton(
-                onClick = {
-                    navController.navigate("homeScreen")
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    tint = Color.White,
-                    contentDescription = null
-                )
-            }
-
+        ) {
             Bold24(modifier = Modifier, text = { "События" })
-
-            IconButton(
-                onClick = { viewModel.getData() }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    tint = Color.White,
-                    contentDescription = null
-                )
-            }
         }
 
         Column(modifier = Modifier.weight(8f)) {
             when (val result = eventsResult.value) {
                 is NetworkResponse.Error -> TODO()
                 NetworkResponse.Loading ->
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxSize(),
                         Arrangement.Center,
                         Alignment.CenterHorizontally
-                    ){
+                    ) {
                         CircularProgressIndicator(
                             color = Color.White
                         )
                     }
+
                 is NetworkResponse.Success -> EventList(
                     data = result.data
                 )
 
                 null ->
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxSize(),
                         Arrangement.Center,
                         Alignment.CenterHorizontally
-                    ){
+                    ) {
                         CircularProgressIndicator(
                             color = Color.White
                         )
@@ -128,11 +115,41 @@ fun EventsPage(viewModel: EventsViewModel, navController: NavHostController){
     }
 }
 
+
 @Composable
-fun EventList(data: EventsModel){
-    LazyColumn{
-        items(data){
-            item -> EventsItem(item)
+fun EventList(
+    data: EventsModel,
+) {
+    var isRefreshing by remember { mutableStateOf(false) }
+    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
+
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = {
+            isRefreshing = true
+
+            EventsViewModel().getData()
+
+            kotlinx.coroutines.MainScope().launch {
+                delay(2000)
+                isRefreshing = false
+            }
+        },
+        indicator = {
+            state, refreshTrigger ->
+            SwipeRefreshIndicator(
+                state = state,
+                refreshTriggerDistance = refreshTrigger,
+                scale = true,
+                backgroundColor = colorResource(R.color.background_black),
+                contentColor = colorResource(R.color.tags_green)
+            )
+        }
+    ) {
+        LazyColumn {
+            items(data) { item ->
+                EventsItem(item)
+            }
         }
     }
 }
@@ -172,8 +189,8 @@ fun EventsItem(item: EventsModelItem) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column() {
-                SemiBold13(text = {item.eventDatetime})
-                Bold24(modifier = Modifier.padding(top = 10.dp), text = {item.eventName})
+                SemiBold13(text = { item.eventDatetime })
+                Bold24(modifier = Modifier.padding(top = 10.dp), text = { item.eventName })
             }
             EventsTags(eventsTags = item)
         }
@@ -190,7 +207,7 @@ fun EventsTags(eventsTags: EventsModelItem) {
                     .clip(shape = RoundedCornerShape(10.dp))
                     .background(color = colorResource(R.color.tags_green))
             ) {
-                SemiBold13(modifier = Modifier.padding(5.dp), text = {tag})
+                SemiBold13(modifier = Modifier.padding(5.dp), text = { tag })
             }
         }
     }
@@ -199,13 +216,14 @@ fun EventsTags(eventsTags: EventsModelItem) {
 
 @Preview
 @Composable
-fun EventsItemPreview(){
+fun EventsItemPreview() {
     EventsItem(
         EventsModelItem(
-        "Test DateTime",
-        "Test Name",
-        listOf("Test Tag", "Test Tag"),
-        "",
-        "")
+            "Test DateTime",
+            "Test Name",
+            listOf("Test Tag", "Test Tag"),
+            "",
+            ""
+        )
     )
 }
