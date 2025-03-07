@@ -90,4 +90,7 @@ dependencies {
 
     implementation(libs.androidx.material)
 
+    implementation(libs.androidx.swiperefreshlayout)
+
+    implementation(libs.accompanist.swiperefresh.v0360)
 }
