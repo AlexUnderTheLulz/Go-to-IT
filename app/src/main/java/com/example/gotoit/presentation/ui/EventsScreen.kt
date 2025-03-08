@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -178,7 +179,7 @@ fun EventsItem(item: EventsModelItem) {
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth()
-            .height(229.dp)
+            .aspectRatio(12f / 7f)
             .clip(shape = RoundedCornerShape(10.dp))
             .clickable {
                 context.startActivity(intent)
@@ -246,7 +247,7 @@ fun ShimmerPlaceholderCard() {
             .padding(10.dp)
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(10.dp))
-            .height(229.dp)
+            .aspectRatio(12f / 7f)
             .background(Color.Gray.copy(alpha = alpha)) // Анимация фона карточки
     ) {
         Column(
