@@ -2,6 +2,11 @@ package com.example.gotoit.presentation.ui
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,10 +17,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,6 +59,7 @@ import kotlinx.coroutines.launch
 fun EventsPage(viewModel: EventsViewModel) {
 
     val eventsResult = viewModel.eventsResult.observeAsState()
+    var isLoading by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -87,15 +95,16 @@ fun EventsPage(viewModel: EventsViewModel) {
                         Bold15(modifier = Modifier, text = { "Ошибка соединения\nс сервером" })
                     }
                 NetworkResponse.Loading ->
-                    Column(
+                    LazyColumn(
                         modifier = Modifier
-                            .fillMaxSize(),
-                        Arrangement.Center,
-                        Alignment.CenterHorizontally
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        CircularProgressIndicator(
-                            color = Color.White
-                        )
+                        // Создаем 5 placeholder элементов
+                        items(5) {
+                            ShimmerPlaceholderCard()
+                        }
                     }
 
                 is NetworkResponse.Success -> EventList(
@@ -109,9 +118,17 @@ fun EventsPage(viewModel: EventsViewModel) {
                         Arrangement.Center,
                         Alignment.CenterHorizontally
                     ) {
-                        CircularProgressIndicator(
-                            color = Color.White
-                        )
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            // Создаем 5 placeholder элементов
+                            items(5) {
+                                ShimmerPlaceholderCard()
+                            }
+                        }
                     }
             }
         }
@@ -215,12 +232,92 @@ fun EventsTags(eventsTags: EventsModelItem) {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun ShimmerPlaceholderCard() {
+    val infiniteTransition = rememberInfiniteTransition()
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(10.dp))
+            .height(229.dp)
+            .background(Color.Gray.copy(alpha = alpha)) // Анимация фона карточки
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape = RoundedCornerShape(10.dp))
+                .background(Color.LightGray.copy(alpha = 0.3f))
+                .padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .height(13.dp)
+                        .width(100.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для первой полосы
+                )
+
+                Box(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(24.dp)
+                        .width(200.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для второй полосы
+                )
+            }
+
+            Row(
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(25.dp)
+                        .width(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для первого круга
+                )
+
+                Box(
+                    modifier = Modifier
+                        .height(25.dp)
+                        .width(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для второго круга
+                )
+
+                Box(
+                    modifier = Modifier
+                        .height(25.dp)
+                        .width(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для третьего круга
+                )
+            }
+        }
+    }
+}
 
 @Preview
 @Composable
 fun EventsItemPreview() {
     EventsItem(
         EventsModelItem(
+            1,
             "Test DateTime",
             "Test Name",
             listOf("Test Tag", "Test Tag"),
