@@ -30,7 +30,7 @@ fun NavigationGraph(
         }
 
         composable(route = "EventsScreen") {
-            EventsPage(eventsViewModel, navController)
+            EventsPage(eventsViewModel)
         }
     }
 }

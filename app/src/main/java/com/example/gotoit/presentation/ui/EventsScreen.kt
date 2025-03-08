@@ -16,12 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -37,12 +32,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.gotoit.data.model.EventsModel
 import com.example.gotoit.data.model.EventsModelItem
 import com.example.gotoit.data.api.NetworkResponse
 import com.example.gotoit.R
+import com.example.gotoit.presentation.theme.typography.Bold15
 import com.example.gotoit.presentation.theme.typography.Bold24
 import com.example.gotoit.presentation.theme.typography.SemiBold13
 import com.example.gotoit.presentation.viewmodel.EventsViewModel
@@ -54,7 +49,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun EventsPage(viewModel: EventsViewModel, navController: NavHostController) {
+fun EventsPage(viewModel: EventsViewModel) {
 
     val eventsResult = viewModel.eventsResult.observeAsState()
 
@@ -82,7 +77,15 @@ fun EventsPage(viewModel: EventsViewModel, navController: NavHostController) {
 
         Column(modifier = Modifier.weight(8f)) {
             when (val result = eventsResult.value) {
-                is NetworkResponse.Error -> TODO()
+                is NetworkResponse.Error ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        Arrangement.Center,
+                        Alignment.CenterHorizontally
+                    ) {
+                        Bold15(modifier = Modifier, text = { "Ошибка соединения\nс сервером" })
+                    }
                 NetworkResponse.Loading ->
                     Column(
                         modifier = Modifier
@@ -135,8 +138,7 @@ fun EventList(
                 isRefreshing = false
             }
         },
-        indicator = {
-            state, refreshTrigger ->
+        indicator = { state, refreshTrigger ->
             SwipeRefreshIndicator(
                 state = state,
                 refreshTriggerDistance = refreshTrigger,
