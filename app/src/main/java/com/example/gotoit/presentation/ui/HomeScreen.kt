@@ -31,8 +31,7 @@ import com.example.gotoit.presentation.theme.icons.vectorImages.Student
 
 
 @Composable
-fun MainScreen(navController: NavController){
-    val eventsViewModel: EventsViewModel = viewModel()
+fun MainScreen(){
 
     Column(
         modifier = Modifier
@@ -73,9 +72,6 @@ fun MainScreen(navController: NavController){
                         .padding(10.dp)
                         .clip(shape = RoundedCornerShape(10.dp))
                         .border(1.dp, color = Color.White, shape = RoundedCornerShape(10.dp))
-                        .clickable {
-                            navController.navigate("EventsScreen")
-                        }
                 ) {
                     Bold24(modifier = Modifier.padding(10.dp), text = { "События" })
                     Bold15(modifier = Modifier.padding(10.dp), text = { "Митапы, конференции и просто неформальные встречи - все эти события из мира IT вы уже можете найти здесь" })
@@ -128,5 +124,5 @@ fun MainScreen(navController: NavController){
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreen(navController = NavController(context = LocalContext.current))
+    MainScreen()
 }

@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -59,7 +58,6 @@ import kotlinx.coroutines.launch
 fun EventsPage(viewModel: EventsViewModel) {
 
     val eventsResult = viewModel.eventsResult.observeAsState()
-    var isLoading by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -101,7 +99,6 @@ fun EventsPage(viewModel: EventsViewModel) {
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Создаем 5 placeholder элементов
                         items(5) {
                             ShimmerPlaceholderCard()
                         }
@@ -124,7 +121,6 @@ fun EventsPage(viewModel: EventsViewModel) {
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            // Создаем 5 placeholder элементов
                             items(5) {
                                 ShimmerPlaceholderCard()
                             }
