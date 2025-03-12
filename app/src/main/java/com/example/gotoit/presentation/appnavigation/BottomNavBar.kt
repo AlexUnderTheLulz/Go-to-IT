@@ -19,7 +19,8 @@ import com.example.gotoit.R
 fun BottomNavBar(navController: NavController){
     val items = listOf(
         BottomNavItem.Events,
-        BottomNavItem.Home
+        BottomNavItem.Calendar,
+        BottomNavItem.Home,
     )
 
     BottomNavigation(
@@ -48,7 +49,6 @@ fun BottomNavBar(navController: NavController){
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

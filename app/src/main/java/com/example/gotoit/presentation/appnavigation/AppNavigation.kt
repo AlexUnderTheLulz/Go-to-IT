@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gotoit.presentation.ui.CalendarPage
 import com.example.gotoit.presentation.ui.EventsPage
 import com.example.gotoit.presentation.ui.MainScreen
 import com.example.gotoit.presentation.viewmodel.EventsViewModel
@@ -26,7 +27,11 @@ fun NavigationGraph(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable(route = "homeScreen") {
-            MainScreen(navController)
+            MainScreen()
+        }
+
+        composable(route = "calendarScreen"){
+            CalendarPage(events = emptyList())
         }
 
         composable(route = "EventsScreen") {
