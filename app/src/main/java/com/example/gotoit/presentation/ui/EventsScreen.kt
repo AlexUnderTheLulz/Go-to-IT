@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +24,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -40,7 +45,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.gotoit.data.model.EventsModel
 import com.example.gotoit.data.model.EventsModelItem
 import com.example.gotoit.data.api.NetworkResponse
 import com.example.gotoit.R
@@ -58,7 +62,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun EventsPage(viewModel: EventsViewModel) {
 
+    val events by viewModel.filteredEvents
     val eventsResult = viewModel.eventsResult.observeAsState()
+    val searchQuery by viewModel.searchQuery
 
     Column(
         modifier = Modifier
@@ -66,10 +72,7 @@ fun EventsPage(viewModel: EventsViewModel) {
             .background(color = colorResource(R.color.background_black)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            modifier = Modifier
-                .weight(0.5f)
-        ) {}
+        Spacer(modifier = Modifier.weight(0.5f))
 
         Row(
             modifier = Modifier
@@ -82,8 +85,27 @@ fun EventsPage(viewModel: EventsViewModel) {
             Bold24(modifier = Modifier, text = { "События" })
         }
 
+        TextField(
+            value = searchQuery ?: "",
+            onValueChange = { viewModel.updateSearchQuery(it) },
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
+                .fillMaxWidth()
+                .height(48.dp)
+                .clip(shape = RoundedCornerShape(10.dp)),
+            placeholder = { Bold15(modifier = Modifier, text = { "Поиск" }, color = Color.Gray) },
+            singleLine = true,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon"
+                )
+            },
+
+        )
+
         Column(modifier = Modifier.weight(8f)) {
-            when (val result = eventsResult.value) {
+            when (eventsResult.value) {
                 is NetworkResponse.Error ->
                     Column(
                         modifier = Modifier
@@ -93,7 +115,7 @@ fun EventsPage(viewModel: EventsViewModel) {
                     ) {
                         Bold15(modifier = Modifier, text = { "Ошибка соединения\nс сервером" })
                     }
-                NetworkResponse.Loading ->
+                NetworkResponse.Loading, null ->
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -105,37 +127,27 @@ fun EventsPage(viewModel: EventsViewModel) {
                         }
                     }
 
-                is NetworkResponse.Success -> EventList(
-                    data = result.data
-                )
-
-                null ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        Arrangement.Center,
-                        Alignment.CenterHorizontally
-                    ) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                is NetworkResponse.Success -> {
+                    if (events.isEmpty()) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            items(5) {
-                                ShimmerPlaceholderCard()
-                            }
+                            Bold15(text = { "Мероприятия не найдены" })
                         }
+                    } else {
+                        EventList(data = events)
                     }
+                }
             }
         }
     }
 }
 
-
 @Composable
 fun EventList(
-    data: EventsModel,
+    data: List<EventsModelItem>,
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
@@ -229,6 +241,7 @@ fun EventsTags(eventsTags: EventsModelItem) {
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun ShimmerPlaceholderCard() {
@@ -244,11 +257,11 @@ fun ShimmerPlaceholderCard() {
 
     Card(
         modifier = Modifier
-            .padding(10.dp)
+            .padding(top = 10.dp, bottom = 10.dp)
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(10.dp))
             .aspectRatio(12f / 7f)
-            .background(Color.Gray.copy(alpha = alpha)) // Анимация фона карточки
+            .background(Color.Gray.copy(alpha = alpha))
     ) {
         Column(
             modifier = Modifier
@@ -264,7 +277,7 @@ fun ShimmerPlaceholderCard() {
                         .height(13.dp)
                         .width(100.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для первой полосы
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp))
                 )
 
                 Box(
@@ -273,7 +286,7 @@ fun ShimmerPlaceholderCard() {
                         .height(24.dp)
                         .width(200.dp)
                         .clip(RoundedCornerShape(3.dp))
-                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для второй полосы
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp))
                 )
             }
 
@@ -286,7 +299,7 @@ fun ShimmerPlaceholderCard() {
                         .height(25.dp)
                         .width(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для первого круга
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp))
                 )
 
                 Box(
@@ -294,7 +307,7 @@ fun ShimmerPlaceholderCard() {
                         .height(25.dp)
                         .width(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для второго круга
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp))
                 )
 
                 Box(
@@ -302,7 +315,7 @@ fun ShimmerPlaceholderCard() {
                         .height(25.dp)
                         .width(60.dp)
                         .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp)) // Анимация для третьего круга
+                        .background(Color.Gray.copy(alpha = alpha), RoundedCornerShape(24.dp))
                 )
             }
         }
@@ -322,4 +335,10 @@ fun EventsItemPreview() {
             ""
         )
     )
+}
+
+@Preview
+@Composable
+fun EventsPagePreview() {
+    EventsPage(viewModel = EventsViewModel())
 }

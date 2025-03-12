@@ -31,7 +31,7 @@ fun NavigationGraph(
         }
 
         composable(route = "calendarScreen"){
-            CalendarPage()
+            CalendarPage(events = emptyList())
         }
 
         composable(route = "EventsScreen") {
