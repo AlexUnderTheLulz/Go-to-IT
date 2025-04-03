@@ -25,7 +25,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextField
@@ -45,7 +48,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.gotoit.data.model.EventsModelItem
+import com.example.gotoit.data.model.events.EventsModelItem
 import com.example.gotoit.data.api.NetworkResponse
 import com.example.gotoit.R
 import com.example.gotoit.presentation.theme.typography.Bold15
@@ -55,6 +58,8 @@ import com.example.gotoit.presentation.viewmodel.EventsViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -66,45 +71,69 @@ fun EventsPage(viewModel: EventsViewModel) {
     val eventsResult = viewModel.eventsResult.observeAsState()
     val searchQuery by viewModel.searchQuery
 
+    val tags by viewModel.tags
+    val selectedTags by viewModel.selectedTags
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(R.color.background_black)),
+            .background(color = colorResource(R.color.background)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Spacer(modifier = Modifier.weight(0.5f))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(15.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Bold24(modifier = Modifier, text = { "События" })
+        Column(modifier = Modifier.weight(1.7f)) {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Bold24(modifier = Modifier, text = { "События" }, color = Color.White)
+            }
+
+            TextField(
+                value = searchQuery ?: "",
+                onValueChange = { viewModel.updateSearchQuery(it) },
+                modifier = Modifier
+                    .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .clip(shape = RoundedCornerShape(10.dp)),
+                placeholder = {
+                    Bold15(
+                        modifier = Modifier,
+                        text = { "Поиск" },
+                        color = Color.Gray
+                    )
+                },
+                singleLine = true,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon",
+                        tint = Color.Gray
+                    )
+                },
+                colors = androidx.compose.material3.TextFieldDefaults.colors(
+                    unfocusedContainerColor = colorResource(R.color.search),
+                    disabledContainerColor = colorResource(R.color.search),
+                    focusedContainerColor = colorResource(R.color.search),
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+
+                    unfocusedTextColor = Color.White,
+                    focusedTextColor = Color.White,
+                    unfocusedLeadingIconColor = Color.White,
+                    focusedLeadingIconColor = Color.White
+                )
+            )
         }
 
-        TextField(
-            value = searchQuery ?: "",
-            onValueChange = { viewModel.updateSearchQuery(it) },
-            modifier = Modifier
-                .padding(start = 15.dp, end = 15.dp, bottom = 15.dp)
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(shape = RoundedCornerShape(10.dp)),
-            placeholder = { Bold15(modifier = Modifier, text = { "Поиск" }, color = Color.Gray) },
-            singleLine = true,
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search Icon"
-                )
-            },
-
-        )
-
         Column(modifier = Modifier.weight(8f)) {
+
             when (eventsResult.value) {
                 is NetworkResponse.Error ->
                     Column(
@@ -115,15 +144,30 @@ fun EventsPage(viewModel: EventsViewModel) {
                     ) {
                         Bold15(modifier = Modifier, text = { "Ошибка соединения\nс сервером" })
                     }
-                NetworkResponse.Loading, null ->
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(5) {
-                            ShimmerPlaceholderCard()
+
+                is NetworkResponse.Loading, null ->
+
+                    Column() {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 15.dp, end = 15.dp, bottom = 10.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(7){
+                                ShimmerPlaceholderTagChip()
+                            }
+                        }
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(7) {
+                                ShimmerPlaceholderCard()
+                            }
                         }
                     }
 
@@ -137,6 +181,22 @@ fun EventsPage(viewModel: EventsViewModel) {
                             Bold15(text = { "Мероприятия не найдены" })
                         }
                     } else {
+
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 15.dp, end = 15.dp, bottom = 15.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(tags) { tag ->
+                                TagChip(
+                                    tag = tag,
+                                    isSelected = selectedTags.contains(tag),
+                                    onTagClick = { viewModel.toggleTag(tag) }
+                                )
+                            }
+                        }
+
                         EventList(data = events)
                     }
                 }
@@ -170,7 +230,7 @@ fun EventList(
                 refreshTriggerDistance = refreshTrigger,
                 scale = true,
                 backgroundColor = colorResource(R.color.background_black),
-                contentColor = colorResource(R.color.tags_green)
+                contentColor = colorResource(R.color.tag)
             )
         }
     ) {
@@ -184,8 +244,11 @@ fun EventList(
 
 @Composable
 fun EventsItem(item: EventsModelItem) {
+
     val context = LocalContext.current
     val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(item.link)) }
+
+    var isLiked by remember { mutableStateOf(item.isLiked) }
 
     Box(
         modifier = Modifier
@@ -217,7 +280,41 @@ fun EventsItem(item: EventsModelItem) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column() {
-                SemiBold13(text = { item.eventDatetime })
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    SemiBold13(text = { "${item.eventDatetime} ${item.city}" })
+
+                    Row(
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share Icon",
+                            tint = Color.White
+
+                        )
+
+                        Icon(
+                            imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Like Icon",
+                            tint = if (isLiked) Color.Red else Color.White,
+                            modifier = Modifier
+                                .clickable {
+                                    isLiked = !isLiked
+                                    item.isLiked = isLiked
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        if (isLiked){
+
+                                        }
+                                    }
+                                }
+                        )
+                    }
+                }
+
                 Bold24(modifier = Modifier.padding(top = 10.dp), text = { item.eventName })
             }
             EventsTags(eventsTags = item)
@@ -239,6 +336,48 @@ fun EventsTags(eventsTags: EventsModelItem) {
             }
         }
     }
+}
+
+@Composable
+fun TagChip(tag: String, isSelected: Boolean, onTagClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(
+                color = if (isSelected) colorResource(R.color.tag).copy(alpha = 0.8f)
+                else colorResource(R.color.tag).copy(alpha = 0.5f)
+            )
+            .clickable { onTagClick() }
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+    ) {
+        Bold15(
+            text = { tag },
+            color = if (isSelected) Color.White else Color.White.copy(alpha = 0.7f)
+        )
+    }
+}
+
+@Composable
+fun ShimmerPlaceholderTagChip() {
+
+    val infiniteTransition = rememberInfiniteTransition()
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 0.8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Box(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(Color.Gray.copy(alpha = alpha))
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+            .width(40.dp)
+            .height(15.dp)
+    )
 }
 
 
@@ -322,6 +461,7 @@ fun ShimmerPlaceholderCard() {
     }
 }
 
+
 @Preview
 @Composable
 fun EventsItemPreview() {
@@ -332,7 +472,8 @@ fun EventsItemPreview() {
             "Test Name",
             listOf("Test Tag", "Test Tag"),
             "",
-            ""
+            "",
+            "Moscow"
         )
     )
 }

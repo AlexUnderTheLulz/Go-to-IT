@@ -2,7 +2,6 @@ package com.example.gotoit.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,7 +45,7 @@ fun CalendarPage(events: List<Event>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(R.color.background_black)),
+            .background(color = colorResource(R.color.background)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Spacer(modifier = Modifier.weight(0.5f))
@@ -54,7 +53,7 @@ fun CalendarPage(events: List<Event>) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .weight(9f)
+                .weight(10f)
                 .padding(15.dp)
         ) {
             Row(
@@ -63,11 +62,11 @@ fun CalendarPage(events: List<Event>) {
                     .padding(bottom = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
 
                 Row {
                     Bold24(
-                        text = {"<"},
+                        text = { "<" },
                         modifier = Modifier
                             .clickable { currentMonth = currentMonth.minusMonths(1) }
                             .padding(8.dp)
@@ -75,12 +74,19 @@ fun CalendarPage(events: List<Event>) {
                 }
 
                 Bold24(
-                    text = { "${currentMonth.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale("ru"))} ${currentMonth.year}" }
+                    text = {
+                        "${
+                            currentMonth.month.getDisplayName(
+                                TextStyle.FULL_STANDALONE,
+                                Locale("ru")
+                            )
+                        } ${currentMonth.year}"
+                    }
                 )
 
                 Row {
                     Bold24(
-                        text = {">"},
+                        text = { ">" },
                         modifier = Modifier
                             .clickable { currentMonth = currentMonth.plusMonths(1) }
                             .padding(8.dp)
@@ -90,7 +96,7 @@ fun CalendarPage(events: List<Event>) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
-            ){
+            ) {
                 listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс").forEach { day ->
                     Bold15(
                         text = { day },
@@ -103,7 +109,7 @@ fun CalendarPage(events: List<Event>) {
                 columns = GridCells.Fixed(7),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(calendarDays.size){ index ->
+                items(calendarDays.size) { index ->
                     val day = calendarDays[index]
 
                     Box(
@@ -118,7 +124,7 @@ fun CalendarPage(events: List<Event>) {
                                     else -> Color.Transparent
                                 }
                             )
-                    ){
+                    ) {
                         Bold15(
                             text = { day.date.dayOfMonth.toString() },
                             modifier = Modifier.align(Alignment.Center),
@@ -128,7 +134,15 @@ fun CalendarPage(events: List<Event>) {
                 }
             }
         }
+
+        Column(modifier = Modifier.weight(8f)) {
+            Bold24(
+                text = { "Избранное" },
+                modifier = Modifier.padding(start = 16.dp, bottom = 15.dp)
+            )
+        }
     }
+
 }
 
 
@@ -141,7 +155,8 @@ fun generateCalendarDays(
     val lastDayOfMonth = yearMonth.atEndOfMonth()
 
     // Смещение первого дня (0 = Понедельник, 6 = Воскресенье)
-    val firstDayOffset = (firstDayOfMonth.dayOfWeek.value - 1 + 7) % 7 // Нормализуем к 0-6, где 0 = Пн
+    val firstDayOffset =
+        (firstDayOfMonth.dayOfWeek.value - 1 + 7) % 7 // Нормализуем к 0-6, где 0 = Пн
     val daysInMonth = yearMonth.lengthOfMonth()
 
     // Дни предыдущего месяца

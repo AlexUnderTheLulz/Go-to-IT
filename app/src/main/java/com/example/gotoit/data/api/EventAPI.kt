@@ -1,6 +1,6 @@
 package com.example.gotoit.data.api
 
-import com.example.gotoit.data.model.EventsModel
+import com.example.gotoit.data.model.events.EventsModel
 import retrofit2.Response
 import retrofit2.http.GET
 

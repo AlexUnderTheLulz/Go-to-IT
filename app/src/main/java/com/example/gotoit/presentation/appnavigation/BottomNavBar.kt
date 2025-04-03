@@ -25,9 +25,9 @@ fun BottomNavBar(navController: NavController){
 
     BottomNavigation(
         modifier = Modifier
-            .background(color = colorResource(R.color.background_black)),
-        backgroundColor = colorResource(R.color.background_black),
-        contentColor = colorResource(R.color.background_black)
+            .background(color = colorResource(R.color.background)),
+        backgroundColor = colorResource(R.color.background),
+        contentColor = colorResource(R.color.background)
     ){
         val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
         items.forEach {
@@ -43,8 +43,8 @@ fun BottomNavBar(navController: NavController){
                         }
                     }
                 },
-                selectedContentColor = colorResource(R.color.tags_green),
-                unselectedContentColor = colorResource(R.color.white)
+                selectedContentColor = colorResource(R.color.white),
+                unselectedContentColor = colorResource(R.color.tag)
             )
         }
     }

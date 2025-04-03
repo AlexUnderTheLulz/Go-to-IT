@@ -87,10 +87,18 @@ dependencies {
     // Navigation
 
     implementation(libs.androidx.navigation.compose)
-
     implementation(libs.androidx.material)
 
-    implementation(libs.androidx.swiperefreshlayout)
+    // Accompanist
 
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.accompanist.swiperefresh.v0360)
+
+    // Room
+
+    implementation(libs.androidx.room.runtime)
+
+    // Maps
+
+    implementation("com.yandex.android:maps.mobile:4.12.0-lite")
 }

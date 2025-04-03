@@ -1,4 +1,4 @@
-package com.example.gotoit.data.model
+package com.example.gotoit.data.model.events
 
 data class EventsModelItem(
     val id: Int,
@@ -7,5 +7,6 @@ data class EventsModelItem(
     val eventsTags: List<String>,
     val link: String,
     val imageUrl: String,
-    val isLiked: Boolean = false
+    val city: String,
+    var isLiked: Boolean = false
 )
