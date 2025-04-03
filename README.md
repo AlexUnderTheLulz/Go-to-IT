@@ -4,7 +4,7 @@ Go to IT — мобильное приложение для отслеживан
 
 ## Текущий UI приложения
 
-![image](https://github.com/user-attachments/assets/21e81c8f-a504-4287-8a05-a793a341b08a)
+![image](https://github.com/user-attachments/assets/add8d91e-db7e-42d6-a3ec-0e9e021393dd)
 
 
 
