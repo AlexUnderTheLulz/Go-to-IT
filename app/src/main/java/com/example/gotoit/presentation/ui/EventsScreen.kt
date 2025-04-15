@@ -25,10 +25,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextField
@@ -58,8 +55,6 @@ import com.example.gotoit.presentation.viewmodel.EventsViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -248,7 +243,6 @@ fun EventsItem(item: EventsModelItem) {
     val context = LocalContext.current
     val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(item.link)) }
 
-    var isLiked by remember { mutableStateOf(item.isLiked) }
 
     Box(
         modifier = Modifier
@@ -280,40 +274,8 @@ fun EventsItem(item: EventsModelItem) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column() {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    SemiBold13(text = { "${item.eventDatetime} ${item.city}" })
 
-                    Row(
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share Icon",
-                            tint = Color.White
-
-                        )
-
-                        Icon(
-                            imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Like Icon",
-                            tint = if (isLiked) Color.Red else Color.White,
-                            modifier = Modifier
-                                .clickable {
-                                    isLiked = !isLiked
-                                    item.isLiked = isLiked
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        if (isLiked){
-
-                                        }
-                                    }
-                                }
-                        )
-                    }
-                }
+                SemiBold13(text = { "${item.eventDatetime} ${item.city}" })
 
                 Bold24(modifier = Modifier.padding(top = 10.dp), text = { item.eventName })
             }

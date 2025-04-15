@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -16,10 +17,24 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
     }
 
     buildTypes {
         release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
+        debug {
+            buildConfigField("String", "TEST_KEY", "\"test_value\"")
+        }
+        release {
+            buildConfigField("String", "TEST_KEY", "\"test_value\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -34,8 +49,16 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+
+    secrets {
+        propertiesFileName = "secrets.properties"
+        defaultPropertiesFileName = "local.defaults.properties"
     }
 }
 
@@ -100,5 +123,7 @@ dependencies {
 
     // Maps
 
-    implementation("com.yandex.android:maps.mobile:4.12.0-lite")
+    implementation(libs.maps.mobile)
+
+    implementation(libs.secrets.gradle.plugin)
 }

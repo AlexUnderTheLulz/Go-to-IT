@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.gotoit.data.model.events.EventsModel
 import com.example.gotoit.data.api.NetworkResponse
 import com.example.gotoit.data.api.RetrofitInstance
+import com.example.gotoit.data.db.LikedEvents
 import com.example.gotoit.data.model.events.EventsModelItem
 import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.launch
@@ -35,6 +36,9 @@ class EventsViewModel : ViewModel() {
 
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
+
+    private val _likedEvents = MutableLiveData<List<LikedEvents>>(emptyList())
+    val likedEvents: LiveData<List<LikedEvents>> = _likedEvents
 
     private val cityCoordinates = mapOf(
         "Москва" to Point(55.751574, 37.573856),
