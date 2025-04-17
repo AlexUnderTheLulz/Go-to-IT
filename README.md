@@ -41,3 +41,18 @@
 | link	        | Ссылка, ведущая на страницу мероприятия                         |
 | eventUrl	    | "Обложка" мероприятия                                           |
 
+## Сборка проекта:
+
+Если вы хотите собрать проект у себя, то вот краткий гайд по сборке:
+1. Склонируйте репозиторий:
+   
+```bash
+git clone https://github.com/AlexUnderTheLulz/Go-to-IT.git
+```
+2. Создайте файл secrets.properties, добавьте его в .gitignore и укажитe ваши ключи от API (от YandexCloud и MapKit SDK):
+```scerets.properties
+MAP_API_KEY= //ваш ключ от API
+EVENTS_API_KEY= //ваш ключ от API
+```
+3. Выполните сборку: Build -> Make Project
+
